@@ -20,38 +20,56 @@ public class Reader{
         return reader;
     }
 
-    public ResultSet selectClientId(String name){
-        String query = "SELECT * FROM clients WHERE name = ?;";
+    public ResultSet selectClientInfo(int id_client){
+        String query = "SELECT * FROM clients WHERE id = ?;";
         ResultSet result = null;
 
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, name);
+            stmt.setInt(1, id_client);
             result = stmt.executeQuery();
             stmt.close();
-
-            return result;
         } catch(Exception e){
             e.printStackTrace();
-            return null;
         }
+
+        return result;
     }
 
-    public ResultSet selectClient(String name, String password){
-        String query = "SELECT * FROM clients WHERE name = ? and password = ?;";
+    public int selectClientId(String name){
+        String query = "SELECT id FROM client WHERE name = ?";
+        ResultSet result = null;
+        int id = -1;
 
         try{
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, name);
-            stmt.setString(2, password);
-            ResultSet result = stmt.executeQuery();
+            result = stmt.executeQuery();
             stmt.close();
+            result.first();
+            id = result.getInt("id");
+            result.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
-            return result;
+        return id;
+    }
+
+    public ResultSet selectClient(String name, String password){
+        String query = "SELECT * FROM clients WHERE name = ? and password = ?;";
+        ResultSet result = null;
+        try{
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, name);
+            stmt.setString(2, password);
+            result = stmt.executeQuery();
+            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
-            return null;
         }
+
+        return result;
     }
 
     public boolean checkFriendship(int id_client1, int id_client2){
