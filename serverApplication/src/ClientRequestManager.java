@@ -9,11 +9,11 @@ import java.util.List;
 
 public class ClientRequestManager {
     private static ClientRequestManager clientRequestManager = null;
-    private String userName = null;
-    private Creator creator = null;
-    private Deleter deleter = null;
-    private Reader reader = null;
-    private Updater updater = null;
+    private String userName = "Victor";
+    private Creator creator;
+    private Deleter deleter;
+    private Reader reader;
+    private Updater updater;
 
     private ClientRequestManager(){
         creator = Creator.getInstance();
@@ -180,7 +180,8 @@ public class ClientRequestManager {
         try{
             ResultSet messages = reader.selectMessages(id_client);
             if(messages == null){
-                response.add("You have no message");
+                response.add("You have no messages");
+                return response;
             }
             while(messages.next()){
                 ResultSet sender_info = reader.selectClientInfo(messages.getInt("id_sender"));
@@ -200,7 +201,13 @@ public class ClientRequestManager {
     private List<String> help(){
         List<String> response = new ArrayList<>();
 
-        response.add("help");
+        response.add("login <name> <username>");
+        response.add("register <name> <password> <repeatPassword>");
+        response.add("friend <name1> <name2> ...");
+        response.add("unfriend <name1>");
+        response.add("message <message>");
+        response.add("read");
+        response.add("logout");
 
         return response;
     }

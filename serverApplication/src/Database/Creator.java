@@ -1,10 +1,12 @@
 package Database;
 
+import jdk.nashorn.internal.objects.annotations.Constructor;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 public class Creator {
-    private static Creator selecter = null;
+    private static Creator creator = null;
     private Connection conn = null;
 
     private Creator(Connection conn){
@@ -12,11 +14,11 @@ public class Creator {
     }
 
     public static Creator getInstance(){
-        if(selecter == null){
-            selecter = new Creator(DBConn.getConnection());
+        if(creator == null){
+            creator = new Creator(DBConn.getConnection());
         }
 
-        return selecter;
+        return creator;
     }
 
     public boolean insertClient(String name, String password){
@@ -28,7 +30,6 @@ public class Creator {
             stmt.setString(1, name);
             stmt.setString(2, password);
             result = stmt.executeUpdate();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -45,7 +46,6 @@ public class Creator {
             stmt.setInt(1, id_friend1);
             stmt.setInt(2, id_friend2);
             result = stmt.executeUpdate();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -63,7 +63,6 @@ public class Creator {
             stmt.setInt(2, id_receiver);
             stmt.setString(3, message);
             result = stmt.executeUpdate();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }

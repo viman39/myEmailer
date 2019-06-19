@@ -31,7 +31,6 @@ public class Deleter {
             stmt.setInt(3, id_friend2);
             stmt.setInt(4, id_friend1);
             result = stmt.executeQuery();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }

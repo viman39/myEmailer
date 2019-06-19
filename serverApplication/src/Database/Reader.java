@@ -14,7 +14,7 @@ public class Reader{
 
     public static Reader getInstance(){
         if(reader == null){
-            Reader reader = new Reader(DBConn.getConnection());
+            reader = new Reader(DBConn.getConnection());
         }
 
         return reader;
@@ -28,7 +28,6 @@ public class Reader{
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id_client);
             result = stmt.executeQuery();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -37,18 +36,16 @@ public class Reader{
     }
 
     public int selectClientId(String name){
-        String query = "SELECT id FROM client WHERE name = ?";
-        ResultSet result = null;
+        String query = "SELECT id FROM clients WHERE name = ?";
+        ResultSet result;
         int id = -1;
 
         try{
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, name);
             result = stmt.executeQuery();
-            stmt.close();
             result.first();
             id = result.getInt("id");
-            result.close();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -58,15 +55,15 @@ public class Reader{
 
     public ResultSet selectClient(String name, String password){
         String query = "SELECT * FROM clients WHERE name = ? and password = ?;";
-        ResultSet result = null;
+        ResultSet result;
         try{
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, name);
             stmt.setString(2, password);
             result = stmt.executeQuery();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
+            result = null;
         }
 
         return result;
@@ -83,7 +80,6 @@ public class Reader{
             stmt.setInt(3, id_client2);
             stmt.setInt(4, id_client1);
             result = stmt.executeQuery();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -100,7 +96,6 @@ public class Reader{
             stmt.setInt(1, id_client);
             stmt.setInt(2, id_client);
             result = stmt.executeQuery();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -116,7 +111,6 @@ public class Reader{
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id_client);
             result = stmt.executeQuery();
-            stmt.close();
         } catch(Exception e){
             e.printStackTrace();
         }
