@@ -1,8 +1,7 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class SocialNetworkClient {
@@ -18,7 +17,7 @@ public class SocialNetworkClient {
         try(
                 Socket socket = new Socket(address, PORT);
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader((new InputStreamReader(socket.getInputStream())))
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         ) {
             Scanner scanner = new Scanner(System.in);
             String request = scanner.nextLine();
@@ -26,14 +25,20 @@ public class SocialNetworkClient {
             while(!request.equals("exit")){
                 out.println(request);
 
-                String response = in.readLine();
-                while(!response.equals("endOfResponse")){
-                    System.out.println(response);
-                    response = in.readLine();
+                try {
+                    Object object = in.readObject();
+                    List<String> response = (ArrayList<String>) object;
+                    for(String respond : response){
+                        System.out.println(respond);
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
+                    System.out.println("Something went wrong");
                 }
-
                 request = scanner.nextLine();
             }
+
+            out.println("exit");
         } catch(IOException e){
             e.printStackTrace();
         }
