@@ -29,10 +29,10 @@ public class ClientRequestManager {
         return clientRequestManager;
     }
 
-    public List<String> requestParser(String request){
+    public List<ResponseMessage> requestParser(String request){
         String[] tokens = request.split(" ");
 
-        List<String> response = new ArrayList<>();
+        List<ResponseMessage> response = new ArrayList<>();
 
         try{
             if(tokens[0].equals("login")){
@@ -60,51 +60,51 @@ public class ClientRequestManager {
             } else if(tokens[0].equals("help")){
                 response = help();
             } else if(userName == null){
-                response.add("You must login first!");
+                response.add(new ResponseMessage("You must login first!"));
             } else{
-                response.add("Invalid command!");
-                response.add("Use help for more information!");
+                response.add(new ResponseMessage("Invalid command!"));
+                response.add(new ResponseMessage("Use help for more information!"));
             }
         } catch(ArrayIndexOutOfBoundsException e){
-            response.add("Invalid number of parameters!");
-            response.add("Try using help!");
+            response.add(new ResponseMessage("Invalid number of parameters!"));
+            response.add(new ResponseMessage("Try using help!"));
         }
 
         return response;
     }
 
-    private List<String> login(String name, String password){
+    private List<ResponseMessage> login(String name, String password){
         ResultSet result = reader.selectClient(name, password);
-        List<String> response = new ArrayList<>();
+        List<ResponseMessage> response = new ArrayList<>();
 
         if (result != null){
-            response.add("You are logged in!");
+            response.add(new ResponseMessage("You are logged in!"));
         } else{
-            response.add("Something went wrong");
+            response.add(new ResponseMessage("Something went wrong"));
         }
 
         return response;
     }
 
-    private List<String> register(String name, String password){
-        List<String> response = new ArrayList<>();
+    private List<ResponseMessage> register(String name, String password){
+        List<ResponseMessage> response = new ArrayList<>();
 
         if(reader.selectClientId(name) != -1){
-            response.add("This username already exists");
+            response.add(new ResponseMessage("This username already exists"));
         }
 
         if(creator.insertClient(name, password)){
-            response.add("Register complete!");
+            response.add(new ResponseMessage("Register complete!"));
         } else{
-            response.add("Something went wrong");
+            response.add(new ResponseMessage("Something went wrong"));
         }
 
         return response;
     }
 
-    private List<String> friend(String[] friends){
+    private List<ResponseMessage> friend(String[] friends){
         int id_userName = 0;
-        List<String> response = new ArrayList<>();
+        List<ResponseMessage> response = new ArrayList<>();
 
         try {
             id_userName = reader.selectClientId(userName);
@@ -118,14 +118,14 @@ public class ClientRequestManager {
                 int id_friend = reader.selectClientId(friend);
 
                 if(reader.checkFriendship(id_userName, id_friend)){
-                    response.add("You are already friends with "+friend);
+                    response.add(new ResponseMessage("You are already friends with "+friend));
                     continue;
                 }
 
                 if (creator.insertFriendship(id_userName, id_friend)){
-                    response.add("You are now friend with "+friend);
+                    response.add(new ResponseMessage("You are now friend with "+friend));
                 } else{
-                    response.add("Failed to add "+friend+" in your friends list");
+                    response.add(new ResponseMessage("Failed to add "+friend+" in your friends list"));
                 }
             } catch(Exception e){
                 e.printStackTrace();
@@ -135,27 +135,27 @@ public class ClientRequestManager {
         return response;
     }
 
-    private List<String> unfriend(String friend){
-        List<String> response = new ArrayList<>();
+    private List<ResponseMessage> unfriend(String friend){
+        List<ResponseMessage> response = new ArrayList<>();
 
         int id_friend = reader.selectClientId(friend);
         if(id_friend == -1){
-            response.add("The user "+friend+" doesn't exist");
+            response.add(new ResponseMessage("The user "+friend+" doesn't exist"));
         }
 
         int id_userName = reader.selectClientId(userName);
         if(deleter.deleteFriendship(id_friend, id_userName)){
-            response.add("You are no longer friend with "+friend);
+            response.add(new ResponseMessage("You are no longer friend with "+friend));
         } else{
-            response.add("Something went wrong!");
+            response.add(new ResponseMessage("Something went wrong!"));
         }
 
         return response;
     }
 
-    private List<String> message(String message){
+    private List<ResponseMessage> message(String message){
         int id_user = reader.selectClientId(userName);
-        List<String> response = new ArrayList<>();
+        List<ResponseMessage> response = new ArrayList<>();
 
         try {
             ResultSet friends = reader.selectFriends(id_user);
@@ -164,23 +164,23 @@ public class ClientRequestManager {
 
                 creator.insertMessage(id_user, id_friend, message);
             }
-            response.add("The message was sent to our friends!");
+            response.add(new ResponseMessage("The message was sent to your friends!"));
         } catch(Exception e){
-            response.add("Something went wrong!");
+            response.add(new ResponseMessage("Something went wrong!"));
             e.printStackTrace();
         }
 
         return response;
     }
 
-    private List<String> read(){
-        List<String> response = new ArrayList<>();
+    private List<ResponseMessage> read(){
+        List<ResponseMessage> response = new ArrayList<>();
         int id_client = reader.selectClientId(userName);
 
         try{
             ResultSet messages = reader.selectMessages(id_client);
             if(messages == null){
-                response.add("You have no messages");
+                response.add(new ResponseMessage("You have no messages"));
                 return response;
             }
             while(messages.next()){
@@ -188,26 +188,26 @@ public class ClientRequestManager {
                 String sender_name = sender_info.getString("name");
                 sender_info.close();
 
-                response.add(sender_name +": "+messages.getString("message"));
+                response.add(new ResponseMessage(sender_name +": "+messages.getString("message")));
             }
         } catch(Exception e){
             e.printStackTrace();
-            response.add("Something went wrong");
+            response.add(new ResponseMessage("Something went wrong"));
         }
 
         return response;
     }
 
-    private List<String> help(){
-        List<String> response = new ArrayList<>();
+    private List<ResponseMessage> help(){
+        List<ResponseMessage> response = new ArrayList<>();
 
-        response.add("login <name> <username>");
-        response.add("register <name> <password> <repeatPassword>");
-        response.add("friend <name1> <name2> ...");
-        response.add("unfriend <name1>");
-        response.add("message <message>");
-        response.add("read");
-        response.add("logout");
+        response.add(new ResponseMessage("login <name> <username>"));
+        response.add(new ResponseMessage("register <name> <password> <repeatPassword>"));
+        response.add(new ResponseMessage("friend <name1> <name2> ..."));
+        response.add(new ResponseMessage("unfriend <name1>"));
+        response.add(new ResponseMessage("message <message>"));
+        response.add(new ResponseMessage("read"));
+        response.add(new ResponseMessage("logout"));
 
         return response;
     }

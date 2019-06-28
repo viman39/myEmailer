@@ -22,9 +22,10 @@ public class ClientThread extends Thread{
             System.out.println(request);
 
             while (!request.equals("exit")) {
-                List<String> response = clientRequestManager.requestParser(request);
+                List<ResponseMessage> response = clientRequestManager.requestParser(request);
                 out.writeObject(response);
                 out.flush();
+                request = in.readLine();
             }
 
             this.socket.close();
