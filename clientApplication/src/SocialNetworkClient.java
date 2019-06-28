@@ -27,9 +27,9 @@ public class SocialNetworkClient {
 
                 try {
                     Object object = in.readObject();
-                    List<String> response = (ArrayList<String>) object;
-                    for(String respond : response){
-                        System.out.println(respond);
+                    List<ResponseMessage> response = (ArrayList<ResponseMessage>) object;
+                    for(ResponseMessage respond : response){
+                        System.out.println(respond.getMessage());
                     }
                 } catch(Exception e){
                     e.printStackTrace();
